@@ -6,19 +6,44 @@ type TBasicSchema = TResumeSchema["basics"];
 
 type TWorkSchema = TResumeSchema["work"];
 
-function CustomField({ fieldName, onChange, value }) {
+function CustomField({
+  fieldName,
+  onChange,
+  value,
+  placeholder = "",
+  as = "input",
+  type = "text",
+}: {
+  fieldName: string;
+  onChange: any;
+  value: string;
+  placeholder?: string;
+  as?: string;
+  type?: string;
+}) {
   return (
     <>
-      <div className="flex gap-[20px] items-center ">
+      <div className="flex flex-col gap-[5px]">
         <label htmlFor="" className="text-white">
           {fieldName}
         </label>
-        <input
-          type="text"
-          value={value}
-          onChange={onChange}
-          className="border-white border text-white"
-        />
+
+        {as === "input" ? (
+          <input
+            type={type}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="border-white border text-white"
+          />
+        ) : (
+          <textarea
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="border-white border text-white"
+          ></textarea>
+        )}
       </div>
     </>
   );
@@ -31,6 +56,73 @@ function BasicSection({
   initalBasicData: TBasicSchema;
   setBasicData: React.Dispatch<React.SetStateAction<TBasicSchema>>;
 }) {
+  let basicFields: Record<
+    string,
+    { placeholder?: string; as?: "textarea" | string; type?: string }
+  > = {
+    name: {
+      placeholder: " eg: john",
+      as: "input",
+      type: "text",
+    },
+    label: {
+      placeholder: " eg: programmer",
+      as: "input",
+      type: "text",
+    },
+    image: {
+      placeholder: "add your image link",
+      as: "input",
+      type: "text",
+    },
+    email: {
+      placeholder: " eg: john@email.com",
+      as: "input",
+      type: "text",
+    },
+    phone: {
+      placeholder: " eg:123456755",
+      as: "input",
+      type: "text",
+    },
+    url: {
+      placeholder: "eg: john@gmail.com",
+      as: "input",
+      type: "text",
+    },
+    summary: {
+      placeholder: "write a small summary about yourself here",
+      as: "textarea",
+      type: "text",
+    },
+
+    address: {
+      placeholder: "eg: 16th sector, rookie inc",
+      as: "input",
+      type: "text",
+    },
+    postalCode: {
+      placeholder: "eg: 523658",
+      as: "input",
+      type: "text",
+    },
+    city: {
+      placeholder: "eg: new delhi",
+      as: "input",
+      type: "text",
+    },
+    countryCode: {
+      placeholder: "eg: IN",
+      as: "input",
+      type: "text",
+    },
+    region: {
+      placeholder: "eg: noida",
+      as: "input",
+      type: "text",
+    },
+  };
+
   function handleBasicFields(
     e: React.ChangeEvent<HTMLInputElement>,
     field: string
@@ -99,10 +191,35 @@ function BasicSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-[10px] max-w-4xl mx-auto">
         <h1 className="font-bold text-2xl text-white">Basic section</h1>
-        {["name", "label", "image", "email", "phone", "url", "summary"].map(
-          (field, index) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
+          {" "}
+          {["name", "label", "image", "email", "phone", "url"].map(
+            (field, index) => {
+              const typedField = field as keyof typeof initalBasicData;
+              return (
+                <>
+                  <CustomField
+                    fieldName={field}
+                    value={
+                      (initalBasicData && initalBasicData[typedField]) || ""
+                    }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      handleBasicFields(e, field);
+                    }}
+                    key={"index" + index + field}
+                    as={basicFields[field]?.as}
+                    placeholder={basicFields[field]?.placeholder}
+                    type={basicFields[field]?.type}
+                  />
+                </>
+              );
+            }
+          )}
+        </div>
+        <div>
+          {["summary"].map((field, index) => {
             const typedField = field as keyof typeof initalBasicData;
             return (
               <>
@@ -113,11 +230,14 @@ function BasicSection({
                     handleBasicFields(e, field);
                   }}
                   key={"index" + index + field}
+                  as={basicFields[field]?.as}
+                  placeholder={basicFields[field]?.placeholder}
+                  type={basicFields[field]?.type}
                 />
               </>
             );
-          }
-        )}
+          })}
+        </div>
 
         <div>location</div>
         {["address", "postalCode", "city", "countryCode", "region"].map(
@@ -229,7 +349,9 @@ function ChipCard({ initalData, onAdd, onDelete }) {
       </div>
       <div className="flex flex-col gap-[5px]">
         {initalData.map((item, index) => {
-          return <Chip value={item} index={index} onDelete={onDelete} key={index} />;
+          return (
+            <Chip value={item} index={index} onDelete={onDelete} key={index} />
+          );
         })}
       </div>
     </>
@@ -242,6 +364,36 @@ function WorkSection({
   intialWorkData: TWorkSchema;
   setWorkData: React.Dispatch<React.SetStateAction<TWorkSchema>>;
 }) {
+  let workFields: Record<
+    string,
+    { placeholder?: string; as?: "textarea" | string; type?: string }
+  > = {
+    name: {
+      as: "input",
+      type: "text",
+    },
+    position: {
+      placeholder: " eg: programmer",
+      as: "input",
+      type: "text",
+    },
+    url: {
+      as: "input",
+      type: "text",
+    },
+    startDate: {
+      as: "input",
+      type: "date",
+    },
+    endDate: {
+      as: "input",
+      type: "date",
+    },
+    summary: {
+      as: "textarea",
+      type: "text",
+    },
+  };
   function handleWorkData(
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
@@ -306,6 +458,13 @@ function WorkSection({
     });
   }
 
+  function deleteWork(index) {
+    setWorkData((prev) => {
+      let newWork = prev?.filter((_, i) => i !== index);
+      return newWork;
+    });
+  }
+
   return (
     <>
       <div className="flex flex-col gap-[15px] p-[20px]">
@@ -313,7 +472,19 @@ function WorkSection({
 
         {intialWorkData?.map((workItem, index) => {
           return (
-            <div className="flex flex-col gap-[10px] border border-white p-[10px]" key={index}>
+            <div
+              className="flex flex-col gap-[10px] border border-white p-[10px]"
+              key={index}
+            >
+              <div className="flex justify">
+                <button
+                  onClick={() => {
+                    deleteWork(index);
+                  }}
+                >
+                  delete
+                </button>
+              </div>
               {(
                 [
                   "name",
@@ -334,14 +505,44 @@ function WorkSection({
                 return (
                   <CustomField
                     fieldName={field}
-                    value={workItem[field]}
+                    value={workItem[field] || ""}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       handleWorkData(e, index, field);
                     }}
                     key={index + field}
+                    as={workFields[field]?.as}
+                    placeholder={workFields[field]?.placeholder}
+                    type={workFields[field]?.type}
                   />
                 );
               })}
+
+              <div className="flex gap-[15px]">
+                {(
+                  ["startDate", "endDate"] as (
+                    | "name"
+                    | "position"
+                    | "url"
+                    | "startDate"
+                    | "endDate"
+                    | "summary"
+                  )[]
+                ).map((field) => {
+                  return (
+                    <CustomField
+                      fieldName={field}
+                      value={workItem[field] || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        handleWorkData(e, index, field);
+                      }}
+                      key={index + field}
+                      as={workFields[field]?.as}
+                      placeholder={workFields[field]?.placeholder}
+                      type={workFields[field]?.type}
+                    />
+                  );
+                })}
+              </div>
 
               <ChipCard
                 initalData={workItem.highlights}
@@ -489,9 +690,11 @@ function App() {
   }, [workData]);
 
   return (
-    <div className="w-full  py-[20px] px-[20px]">
-      <BasicSection initalBasicData={basicData} setBasicData={setBasic} />
-      <WorkSection intialWorkData={workData} setWorkData={setWork} />
+    <div className="w-full  py-[20px] px-[20px] ">
+      <div className="mx-auto">
+        <BasicSection initalBasicData={basicData} setBasicData={setBasic} />
+        <WorkSection intialWorkData={workData} setWorkData={setWork} />
+      </div>
     </div>
   );
 }
