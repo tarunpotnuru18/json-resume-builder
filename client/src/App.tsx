@@ -41,7 +41,7 @@ function CustomField({
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            className="border-white border text-white"
+            className="border-white border text-white resize-none min-h-[100px] "
           ></textarea>
         )}
       </div>
@@ -191,7 +191,7 @@ function BasicSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[10px] max-w-4xl mx-auto">
+      <div className="flex flex-col gap-[10px] ">
         <h1 className="font-bold text-2xl text-white">Basic section</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
           {" "}
@@ -239,59 +239,68 @@ function BasicSection({
           })}
         </div>
 
-        <div>location</div>
-        {["address", "postalCode", "city", "countryCode", "region"].map(
-          (field, index) => {
-            if (initalBasicData) {
-              let typedField = field as keyof typeof initalBasicData.location;
-              return (
-                <>
-                  <CustomField
-                    fieldName={field}
-                    value={
-                      (initalBasicData.location &&
-                        initalBasicData.location[typedField]) ||
-                      ""
-                    }
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      handleLocationFields(e, field);
-                    }}
-                    key={"index" + index + field}
-                  />
-                </>
-              );
-            }
-          }
-        )}
-
-        <div>Profile</div>
-        {initalBasicData?.profiles?.map((profile, index) => {
-          return (
-            <div>
-              {(
-                ["username", "url", "network"] as (
-                  | "username"
-                  | "url"
-                  | "network"
-                )[]
-              ).map((field) => {
+        <h1 className="text-white font-bold text-2xl">location</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
+          {["address", "postalCode", "city", "countryCode", "region"].map(
+            (field, index) => {
+              if (initalBasicData) {
+                let typedField = field as keyof typeof initalBasicData.location;
                 return (
-                  <CustomField
-                    value={profile[field]}
-                    fieldName={field}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      handleProfileItems(e, field, index);
-                    }}
-                  />
+                  <>
+                    <CustomField
+                      fieldName={field}
+                      value={
+                        (initalBasicData.location &&
+                          initalBasicData.location[typedField]) ||
+                        ""
+                      }
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        handleLocationFields(e, field);
+                      }}
+                      key={"index" + index + field}
+                    />
+                  </>
                 );
-              })}
-
-              <button onClick={() => handleDeleteProfileItems(index)}>
-                delete
-              </button>
-            </div>
-          );
-        })}
+              }
+            }
+          )}
+        </div>
+        <div>Profile</div>
+        <div className="flex flex-col gap-[20px]">
+          {initalBasicData?.profiles?.map((profile, index) => {
+            return (
+              <div className="w-full border border-white p-[10px]">
+                <div className="flex w-full justify-end">
+                  <button
+                    onClick={() => handleDeleteProfileItems(index)}
+                    className="text-white"
+                  >
+                    delete
+                  </button>
+                </div>
+                <div className="grid md:grid-cols-3 md:gap-[25px]  p-[10px]">
+                  {(
+                    ["username", "url", "network"] as (
+                      | "username"
+                      | "url"
+                      | "network"
+                    )[]
+                  ).map((field) => {
+                    return (
+                      <CustomField
+                        value={profile[field]}
+                        fieldName={field}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          handleProfileItems(e, field, index);
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
         <button
           onClick={() => addProfileItems()}
@@ -357,6 +366,41 @@ function ChipCard({ initalData, onAdd, onDelete }) {
     </>
   );
 }
+function Highlights({ intialData, onAdd, OnDelete, onChange }) {
+  return (
+    <>
+      <div>
+        {intialData.map((value, index) => {
+          <div className="flex justify-between">
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => {
+                onChange(e.target.value, index);
+              }}
+            />
+            <button
+              onClick={() => {
+                OnDelete(index);
+              }}
+            >
+              delete
+            </button>
+          </div>;
+        })}
+      
+        <button
+          onClick={() => {
+            onAdd();
+          }}
+        >
+          Add
+        </button>
+      </div>
+    </>
+  );
+}
+
 function WorkSection({
   intialWorkData,
   setWorkData,
@@ -439,6 +483,54 @@ function WorkSection({
       return newWork;
     });
   }
+  function addHighlights(index) {
+    setWorkData((prev) => {
+      let newWork = prev?.map((item, i) => {
+        if (i === index) {
+          return {
+            ...item,
+            highlights: [...(item.highlights ? item.highlights : []), "c"],
+          };
+        }
+        return item;
+      });
+
+      return newWork;
+    });
+  }
+  function deleteHighlights(itemIndex, highIndex) {
+    setWorkData((prev) => {
+      let newWork = prev?.map((item, i) => {
+        if (i === itemIndex) {
+          return {
+            ...item,
+            highlights: item.highlights?.filter((_, hi) => hi !== highIndex),
+          };
+        }
+        return item;
+      });
+      return newWork;
+    });
+  }
+  function changeHighlights(value, itemIndex, highIndex) {
+    setWorkData((prev) => {
+      let newWork = prev?.map((item, i) => {
+        if (i === itemIndex) {
+          return {
+            ...item,
+            highlights: item.highlights?.map((val, hi) => {
+              if (hi === highIndex) {
+                return value;
+              }
+              return val;
+            }),
+          };
+        }
+        return item;
+      });
+      return newWork;
+    });
+  }
   function handleDeleteHighlights(itemIndex, highIndex) {
     setWorkData((prev) => {
       let newWork = prev?.map((item, i) => {
@@ -447,7 +539,7 @@ function WorkSection({
             ...item,
             highlights: [
               ...(item.highlights
-                ? item.highlights.filter((_, i) => i !== highIndex)
+                ? item.highlights.filter((_, hi) => hi !== highIndex)
                 : []),
             ],
           };
@@ -467,7 +559,7 @@ function WorkSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[15px] p-[20px]">
+      <div className="flex flex-col gap-[15px] ">
         <h1 className="font-bold text-2xl text-white">Work section</h1>
 
         {intialWorkData?.map((workItem, index) => {
@@ -476,50 +568,100 @@ function WorkSection({
               className="flex flex-col gap-[10px] border border-white p-[10px]"
               key={index}
             >
-              <div className="flex justify">
+              <div className="flex ">
                 <button
                   onClick={() => {
                     deleteWork(index);
                   }}
+                  className="justify-end"
                 >
                   delete
                 </button>
               </div>
-              {(
-                [
-                  "name",
-                  "position",
-                  "url",
-                  "startDate",
-                  "endDate",
-                  "summary",
-                ] as (
-                  | "name"
-                  | "position"
-                  | "url"
-                  | "startDate"
-                  | "endDate"
-                  | "summary"
-                )[]
-              ).map((field) => {
-                return (
-                  <CustomField
-                    fieldName={field}
-                    value={workItem[field] || ""}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      handleWorkData(e, index, field);
-                    }}
-                    key={index + field}
-                    as={workFields[field]?.as}
-                    placeholder={workFields[field]?.placeholder}
-                    type={workFields[field]?.type}
-                  />
-                );
-              })}
 
-              <div className="flex gap-[15px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
+                {(
+                  ["name", "position"] as (
+                    | "name"
+                    | "position"
+                    | "url"
+                    | "startDate"
+                    | "endDate"
+                    | "summary"
+                  )[]
+                ).map((field) => {
+                  return (
+                    <CustomField
+                      fieldName={field}
+                      value={workItem[field] || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        handleWorkData(e, index, field);
+                      }}
+                      key={index + field}
+                      as={workFields[field]?.as}
+                      placeholder={workFields[field]?.placeholder}
+                      type={workFields[field]?.type}
+                    />
+                  );
+                })}
+              </div>
+
+              <div>
+                {(
+                  ["url"] as (
+                    | "name"
+                    | "position"
+                    | "url"
+                    | "startDate"
+                    | "endDate"
+                    | "summary"
+                  )[]
+                ).map((field) => {
+                  return (
+                    <CustomField
+                      fieldName={field}
+                      value={workItem[field] || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        handleWorkData(e, index, field);
+                      }}
+                      key={index + field}
+                      as={workFields[field]?.as}
+                      placeholder={workFields[field]?.placeholder}
+                      type={workFields[field]?.type}
+                    />
+                  );
+                })}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
                 {(
                   ["startDate", "endDate"] as (
+                    | "name"
+                    | "position"
+                    | "url"
+                    | "startDate"
+                    | "endDate"
+                    | "summary"
+                  )[]
+                ).map((field) => {
+                  return (
+                    <CustomField
+                      fieldName={field}
+                      value={workItem[field] || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        handleWorkData(e, index, field);
+                      }}
+                      key={index + field}
+                      as={workFields[field]?.as}
+                      placeholder={workFields[field]?.placeholder}
+                      type={workFields[field]?.type}
+                    />
+                  );
+                })}
+              </div>
+              <div>
+                {(
+                  ["summary"] as (
                     | "name"
                     | "position"
                     | "url"
@@ -551,6 +693,19 @@ function WorkSection({
                 }}
                 onDelete={(highIndex) => {
                   handleDeleteHighlights(index, highIndex);
+                }}
+              />
+
+              <Highlights
+                intialData={workItem.highlights}
+                onAdd={() => {
+                  addHighlights(index);
+                }}
+                onChange={(value, highIndex) => {
+                  changeHighlights(value, index, highIndex);
+                }}
+                OnDelete={(highIndex) => {
+                  deleteHighlights(index, highIndex);
                 }}
               />
             </div>
@@ -691,7 +846,7 @@ function App() {
 
   return (
     <div className="w-full  py-[20px] px-[20px] ">
-      <div className="mx-auto">
+      <div className="max-w-4xl mx-auto">
         <BasicSection initalBasicData={basicData} setBasicData={setBasic} />
         <WorkSection intialWorkData={workData} setWorkData={setWork} />
       </div>
