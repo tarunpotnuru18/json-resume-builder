@@ -6,10 +6,27 @@ import type {
   TWorkSchema,
   TEducationSchema,
   TVolunteerSchema,
+  TAwardsSchema,
+  TCertificatesSchema,
+  TInterestsSchema,
+  TLanguagesSchema,
+  TProjectsSchema,
+  TPublicationsSchema,
+  TReferencesSchema,
+  TSkillsSchema,
 } from "./Schema";
 import BasicSection from "./Components/BasicSection";
 import WorkSection from "./Components/WorkSection";
 import VolunteerSection from "./Components/VolunteerSection";
+import EducationSection from "./Components/EducationSection";
+import AwardsSection from "./Components/AwardsSection";
+import CertificatesSection from "./Components/CertificatesSection";
+import PublicationsSection from "./Components/PublicationsSection";
+import SkillsSection from "./Components/SkillsSection";
+import LanguagesSection from "./Components/LanguagesSection";
+import InterestsSection from "./Components/InterestsSection";
+import ReferencesSection from "./Components/ReferencesSection";
+import ProjectsSection from "./Components/ProjectsSection";
 
 function App() {
   const [formData, setFormData] = useState<TResumeSchema>({
@@ -31,89 +48,16 @@ function App() {
       profiles: [],
     },
     work: [],
-    volunteer: [
-      {
-        organization: "",
-        position: "",
-        url: "",
-        startDate: "",
-        endDate: "",
-        summary: "",
-        highlights: [""],
-      },
-    ],
-    education: [
-      {
-        institution: "",
-        url: "",
-        area: "",
-        studyType: "",
-        startDate: "",
-        endDate: "",
-        score: "",
-        courses: [""],
-      },
-    ],
-    awards: [
-      {
-        title: "",
-        date: "",
-        awarder: "",
-        summary: "",
-      },
-    ],
-    certificates: [
-      {
-        name: "",
-        date: "",
-        issuer: "",
-        url: "",
-      },
-    ],
-    publications: [
-      {
-        name: "",
-        publisher: "",
-        releaseDate: "",
-        url: "",
-        summary: "",
-      },
-    ],
-    skills: [
-      {
-        name: "",
-        level: "",
-        keywords: [""],
-      },
-    ],
-    languages: [
-      {
-        language: "",
-        fluency: "",
-      },
-    ],
-    interests: [
-      {
-        name: "",
-        keywords: [""],
-      },
-    ],
-    references: [
-      {
-        name: "",
-        reference: "",
-      },
-    ],
-    projects: [
-      {
-        name: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-        highlights: [""],
-        url: "",
-      },
-    ],
+    volunteer: [],
+    education: [],
+    awards: [],
+    certificates: [],
+    publications: [],
+    skills: [],
+    languages: [],
+    interests: [],
+    references: [],
+    projects: [],
   });
 
   const [basicData, setBasic] = useState<TBasicSchema>(formData.basics);
@@ -123,6 +67,30 @@ function App() {
   );
   const [educationData, setEducation] = useState<TEducationSchema>(
     formData.education
+  );
+  const [awardsData, setAwards] = useState<TAwardsSchema>(
+    formData.awards
+  );
+  const [certificatesData, setCertificates] = useState<TCertificatesSchema>(
+    formData.certificates
+  );
+  const [publicationsData, setPublications] = useState<TPublicationsSchema>(
+    formData.publications
+  );
+  const [skillsData, setSkills] = useState<TSkillsSchema>(
+    formData.skills
+  );
+  const [languagesData, setLanguages] = useState<TLanguagesSchema>(
+    formData.languages
+  );
+  const [interestsData, setInterests] = useState<TInterestsSchema>(
+    formData.interests
+  );
+  const [referencesData, setReferences] = useState<TReferencesSchema>(
+    formData.references
+  );
+  const [projectsData, setProjects] = useState<TProjectsSchema>(
+    formData.projects
   );
 
   useEffect(() => {
@@ -136,9 +104,46 @@ function App() {
   useEffect(() => {
     console.log("changes done on work Section", workData);
   }, [workData]);
+
   useEffect(() => {
     console.log("changes done on volunteer Section", volunteerData);
   }, [volunteerData]);
+
+  useEffect(() => {
+    console.log("changes done on education Section", educationData);
+  }, [educationData]);
+
+  useEffect(() => {
+    console.log("changes done on awards Section", awardsData);
+  }, [awardsData]);
+
+  useEffect(() => {
+    console.log("changes done on certificates Section", certificatesData);
+  }, [certificatesData]);
+
+  useEffect(() => {
+    console.log("changes done on publications Section", publicationsData);
+  }, [publicationsData]);
+
+  useEffect(() => {
+    console.log("changes done on skills Section", skillsData);
+  }, [skillsData]);
+
+  useEffect(() => {
+    console.log("changes done on languages Section", languagesData);
+  }, [languagesData]);
+
+  useEffect(() => {
+    console.log("changes done on interests Section", interestsData);
+  }, [interestsData]);
+
+  useEffect(() => {
+    console.log("changes done on references Section", referencesData);
+  }, [referencesData]);
+
+  useEffect(() => {
+    console.log("changes done on projects Section", projectsData);
+  }, [projectsData]);
 
   return (
     <div className="w-full  py-[20px] px-[20px] ">
@@ -148,6 +153,42 @@ function App() {
         <VolunteerSection
           intialVolunteerData={volunteerData}
           setVolunteerData={setVolunteer}
+        />
+        <EducationSection
+          intialEducationData={educationData}
+          setEducationData={setEducation}
+        />
+        <AwardsSection
+          intialAwardsData={awardsData}
+          setAwardsData={setAwards}
+        />
+        <CertificatesSection
+          intialCertificatesData={certificatesData}
+          setCertificatesData={setCertificates}
+        />
+        <PublicationsSection
+          intialPublicationsData={publicationsData}
+          setPublicationsData={setPublications}
+        />
+        <SkillsSection
+          intialSkillsData={skillsData}
+          setSkillsData={setSkills}
+        />
+        <LanguagesSection
+          intialLanguagesData={languagesData}
+          setLanguagesData={setLanguages}
+        />
+        <InterestsSection
+          intialInterestsData={interestsData}
+          setInterestsData={setInterests}
+        />
+        <ReferencesSection
+          intialReferencesData={referencesData}
+          setReferencesData={setReferences}
+        />
+        <ProjectsSection
+          intialProjectsData={projectsData}
+          setProjectsData={setProjects}
         />
       </div>
     </div>
