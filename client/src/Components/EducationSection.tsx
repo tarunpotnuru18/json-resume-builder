@@ -131,7 +131,7 @@ export default function EducationSection({
   return (
     <>
       <div className="flex flex-col gap-[15px] ">
-        <h1 className="font-bold text-2xl text-white">Volunteer section</h1>
+        <h1 className="font-bold text-2xl text-white">Education section</h1>
 
         {intialEducationData?.map((EducationItem, index) => {
           return (

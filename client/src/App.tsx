@@ -28,37 +28,40 @@ import InterestsSection from "./Components/InterestsSection";
 import ReferencesSection from "./Components/ReferencesSection";
 import ProjectsSection from "./Components/ProjectsSection";
 
-function App() {
-  const [formData, setFormData] = useState<TResumeSchema>({
-    basics: {
-      name: "",
-      label: "",
-      image: "",
-      email: "",
-      phone: "",
-      url: "",
-      summary: "",
-      location: {
-        address: "",
-        postalCode: "",
-        city: "",
-        countryCode: "",
-        region: "",
-      },
-      profiles: [],
+
+
+let sampleData = {
+  basics: {
+    name: "",
+    label: "",
+    image: "",
+    email: "",
+    phone: "",
+    url: "",
+    summary: "",
+    location: {
+      address: "",
+      postalCode: "",
+      city: "",
+      countryCode: "",
+      region: "",
     },
-    work: [],
-    volunteer: [],
-    education: [],
-    awards: [],
-    certificates: [],
-    publications: [],
-    skills: [],
-    languages: [],
-    interests: [],
-    references: [],
-    projects: [],
-  });
+    profiles: [],
+  },
+  work: [],
+  volunteer: [],
+  education: [],
+  awards: [],
+  certificates: [],
+  publications: [],
+  skills: [],
+  languages: [],
+  interests: [],
+  references: [],
+  projects: [],
+};
+function App() {
+  const [formData, setFormData] = useState<TResumeSchema>(milindBro);
 
   const [basicData, setBasic] = useState<TBasicSchema>(formData.basics);
   const [workData, setWork] = useState<TWorkSchema>(formData.work);
@@ -68,18 +71,14 @@ function App() {
   const [educationData, setEducation] = useState<TEducationSchema>(
     formData.education
   );
-  const [awardsData, setAwards] = useState<TAwardsSchema>(
-    formData.awards
-  );
+  const [awardsData, setAwards] = useState<TAwardsSchema>(formData.awards);
   const [certificatesData, setCertificates] = useState<TCertificatesSchema>(
     formData.certificates
   );
   const [publicationsData, setPublications] = useState<TPublicationsSchema>(
     formData.publications
   );
-  const [skillsData, setSkills] = useState<TSkillsSchema>(
-    formData.skills
-  );
+  const [skillsData, setSkills] = useState<TSkillsSchema>(formData.skills);
   const [languagesData, setLanguages] = useState<TLanguagesSchema>(
     formData.languages
   );

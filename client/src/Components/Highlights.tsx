@@ -1,4 +1,4 @@
-export default function Highlights({ intialData, onAdd, OnDelete, onChange }) {
+export default function Highlights({ intialData=[], onAdd, OnDelete, onChange }) {
   return (
     <>
       <div>

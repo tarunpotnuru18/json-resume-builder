@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export default function ChipCard({ initalData, onAdd, onDelete }) {
   let [currentValue, setCurrent] = useState("");
   function Chip({ value, onDelete, index }) {
