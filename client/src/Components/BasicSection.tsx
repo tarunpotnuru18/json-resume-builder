@@ -1,6 +1,7 @@
 import type { TBasicSchema } from "../Schema";
+import DeleteBtn from "./Buttons/Delete";
 import CustomField from "./CustomField";
-
+import { Plus, Trash2 } from "lucide-react";
 export default function BasicSection({
   initalBasicData,
   setBasicData,
@@ -13,7 +14,7 @@ export default function BasicSection({
     { placeholder?: string; as?: "textarea" | string; type?: string }
   > = {
     name: {
-      placeholder: " eg: john",
+      placeholder: "eg: john",
       as: "input",
       type: "text",
     },
@@ -23,7 +24,7 @@ export default function BasicSection({
       type: "text",
     },
     image: {
-      placeholder: "add your image link",
+      placeholder: "add your image url",
       as: "input",
       type: "text",
     },
@@ -38,7 +39,7 @@ export default function BasicSection({
       type: "text",
     },
     url: {
-      placeholder: "eg: john@gmail.com",
+      placeholder: "eg: add your portfolio url",
       as: "input",
       type: "text",
     },
@@ -70,6 +71,26 @@ export default function BasicSection({
     },
     region: {
       placeholder: "eg: noida",
+      as: "input",
+      type: "text",
+    },
+  };
+  let profileFields: Record<
+    string,
+    { placeholder?: string; as?: "textarea" | string; type?: string }
+  > = {
+    network: {
+      placeholder: "eg: github",
+      as: "input",
+      type: "text",
+    },
+    username: {
+      placeholder: "eg: john",
+      as: "input",
+      type: "text",
+    },
+    url: {
+      placeholder: "eg: github.com/john",
       as: "input",
       type: "text",
     },
@@ -143,7 +164,7 @@ export default function BasicSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[10px] ">
+      <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px] ">
         <h1 className="font-bold text-2xl text-white">Basic section</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
           {" "}
@@ -210,6 +231,7 @@ export default function BasicSection({
                         handleLocationFields(e, field);
                       }}
                       key={"index" + index + field}
+                      placeholder={basicFields[field]?.placeholder}
                     />
                   </>
                 );
@@ -217,20 +239,23 @@ export default function BasicSection({
             }
           )}
         </div>
-        <div>Profile</div>
+        <div className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2 text-slate-200">
+          Social Profiles
+        </div>
         <div className="flex flex-col gap-[20px]">
           {initalBasicData?.profiles?.map((profile, index) => {
             return (
-              <div className="w-full border border-white p-[10px]">
-                <div className="flex w-full justify-end">
-                  <button
-                    onClick={() => handleDeleteProfileItems(index)}
-                    className="text-white"
-                  >
-                    delete
-                  </button>
+              <div className="w-full border border-slate-600/40 bg-slate-700/20 rounded-lg p-[16px]">
+                <div className="flex w-full justify-between">
+                  <span className="font-medium text-slate-200">{`Profile ${
+                    index + 1
+                  }`}</span>
+
+                  <DeleteBtn
+                    onclick={() => handleDeleteProfileItems(index)}
+                  ></DeleteBtn>
                 </div>
-                <div className="grid md:grid-cols-3 md:gap-[25px]  p-[10px]">
+                <div className="grid md:grid-cols-3 md:gap-[25px] gap-[10px]  p-[10px]">
                   {(
                     ["username", "url", "network"] as (
                       | "username"
@@ -245,6 +270,7 @@ export default function BasicSection({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           handleProfileItems(e, field, index);
                         }}
+                        placeholder={profileFields[field].placeholder}
                       />
                     );
                   })}
@@ -254,12 +280,15 @@ export default function BasicSection({
           })}
         </div>
 
-        <button
-          onClick={() => addProfileItems()}
-          className="border border-white "
-        >
-          add
-        </button>
+        <div className="w-full">
+          <button
+            onClick={() => addProfileItems()}
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 bg-transparent transition-colors flex items-center p-[8px] rounded-md outline active:bg-slate-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Social Profile
+          </button>
+        </div>
       </div>
     </>
   );

@@ -1,4 +1,6 @@
+import { Plus } from "lucide-react";
 import type { TVolunteerSchema } from "../Schema";
+import DeleteBtn from "./Buttons/Delete";
 import CustomField from "./CustomField";
 import Highlights from "./Highlights";
 
@@ -14,17 +16,19 @@ export default function VolunteerSection({
     { placeholder?: string; as?: "textarea" | string; type?: string }
   > = {
     organization: {
+      placeholder:"organization name",
       as: "input",
       type: "text",
     },
     position: {
-      placeholder: " eg: programmer",
+      placeholder: " eg: lead",
       as: "input",
       type: "text",
     },
     url: {
       as: "input",
       type: "text",
+      placeholder:"organization url"
     },
     startDate: {
       as: "input",
@@ -37,6 +41,7 @@ export default function VolunteerSection({
     summary: {
       as: "textarea",
       type: "text",
+      placeholder:"summary about the experience"
     },
   };
   function handleVolunteerData(
@@ -129,24 +134,24 @@ export default function VolunteerSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[15px] ">
+      <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px] ">
         <h1 className="font-bold text-2xl text-white">Volunteer section</h1>
 
         {intialVolunteerData?.map((volunteerItem, index) => {
           return (
             <div
-              className="flex flex-col gap-[10px] border border-white p-[10px]"
+              className="flex flex-col gap-[15px] w-full border border-slate-600/40 bg-slate-700/20 rounded-lg p-[16px]"
               key={index}
             >
-              <div className="flex ">
-                <button
-                  onClick={() => {
+              <div className="flex justify-between ">
+                <span className="font-medium text-slate-200">
+                  {`Activity ${index + 1}`}
+                </span>
+                <DeleteBtn
+                  onclick={() => {
                     deleteVolunteer(index);
                   }}
-                  className="justify-end"
-                >
-                  delete
-                </button>
+                ></DeleteBtn>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
@@ -256,7 +261,7 @@ export default function VolunteerSection({
                 })}
               </div>
 
-              <h1>acheivements</h1>
+              <h1 className="font-medium text-slate-300">Acheivements</h1>
               <Highlights
                 intialData={volunteerItem.highlights}
                 onAdd={() => {
@@ -268,19 +273,24 @@ export default function VolunteerSection({
                 OnDelete={(highIndex) => {
                   deleteHighlights(index, highIndex);
                 }}
+                placeholder={"describe your acheivement"}
+                btnName={"Add Acheivement"}
               />
             </div>
           );
         })}
 
-        <button
-          className="border border-white"
-          onClick={() => {
-            addVolunteer();
-          }}
-        >
-          add
-        </button>
+        <div className="w-full">
+          <button
+            onClick={() => {
+              addVolunteer();
+            }}
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 bg-transparent transition-colors flex items-center p-[8px] rounded-md outline active:bg-slate-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Volunteer Experience
+          </button>
+        </div>
       </div>
     </>
   );

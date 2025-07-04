@@ -1,6 +1,9 @@
 import type { TInterestsSchema } from "../Schema";
 import CustomField from "./CustomField";
 import ChipCard from "./ChipCard";
+import DeleteBtn from "./Buttons/Delete";
+import Highlights from "./Highlights";
+import { Plus } from "lucide-react";
 
 export default function InterestsSection({
   intialInterestsData,
@@ -45,32 +48,62 @@ export default function InterestsSection({
     });
   }
 
-  function addKeyword(keyword, index) {
+  function handleAddKeyWord(index) {
     setInterestsData((prev) => {
-      let newInterests = prev?.map((item, i) => {
+      let newData = prev?.map((item, i) => {
         if (i === index) {
           return {
             ...item,
-            keywords: [...(item.keywords ? item.keywords : []), keyword],
+            keywords: [...(item.keywords ? item.keywords : []), ""],
           };
         }
         return item;
       });
-      return newInterests;
+      return newData;
     });
   }
-  function deleteKeyword(itemIndex, keywordIndex) {
+
+  function handlechangeKeyword(index, highIndex, value) {
     setInterestsData((prev) => {
-      let newInterests = prev?.map((item, i) => {
-        if (i === itemIndex) {
+      let newData = prev?.map((item, i) => {
+        if (i === index) {
           return {
             ...item,
-            keywords: item.keywords?.filter((_, ki) => ki !== keywordIndex),
+            keywords: [
+              ...(item.keywords
+                ? item.keywords.map((key, hi) => {
+                    if (hi === highIndex) {
+                      return value;
+                    }
+                    return key;
+                  })
+                : []),
+            ],
           };
         }
         return item;
       });
-      return newInterests;
+
+      return newData;
+    });
+  }
+  function handleDeleteKeyword(index, highIndex) {
+    setInterestsData((prev) => {
+      let newData = prev?.map((item, i) => {
+        if (i === index) {
+          return {
+            ...item,
+            keywords: [
+              ...(item.keywords
+                ? item.keywords.filter((key, hi) => hi === highIndex)
+                : []),
+            ],
+          };
+        }
+        return item;
+      });
+
+      return newData;
     });
   }
 
@@ -83,32 +116,28 @@ export default function InterestsSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[15px] ">
+      <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px] ">
         <h1 className="font-bold text-2xl text-white">Interests section</h1>
 
         {intialInterestsData?.map((interestItem, index) => {
           return (
             <div
-              className="flex flex-col gap-[10px] border border-white p-[10px]"
+              className="flex flex-col gap-[15px] w-full border border-slate-600/40 bg-slate-700/20 rounded-lg p-[16px]"
               key={index}
             >
-              <div className="flex ">
-                <button
-                  onClick={() => {
+              <div className="flex justify-between ">
+                <span className="font-medium text-slate-200">
+                  {`Intrest ${index + 1}`}
+                </span>
+                <DeleteBtn
+                  onclick={() => {
                     deleteInterest(index);
                   }}
-                  className="justify-end"
-                >
-                  delete
-                </button>
+                ></DeleteBtn>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
-                {(
-                  ["name"] as (
-                    | "name"
-                  )[]
-                ).map((field) => {
+              <div className="grid grid-cols-1  gap-[25px]">
+                {(["name"] as "name"[]).map((field) => {
                   return (
                     <CustomField
                       fieldName={field}
@@ -125,28 +154,39 @@ export default function InterestsSection({
                 })}
               </div>
 
-              <h1>keywords</h1>
-              <ChipCard
-                initalData={interestItem.keywords}
-                onAdd={(keyword) => {
-                  addKeyword(keyword, index);
+              <h1 className="font-medium text-slate-300">keywords</h1>
+
+              <Highlights
+                intialData={interestItem?.keywords}
+                onAdd={() => {
+                  handleAddKeyWord(index);
                 }}
-                onDelete={(keywordIndex) => {
-                  deleteKeyword(index, keywordIndex);
+                OnDelete={(highIndex) => {
+                  handleDeleteKeyword(index, highIndex);
                 }}
+                onChange={(value, highIndex) => {
+                  handlechangeKeyword(value, index, highIndex);
+                }}
+                placeholder={
+                  "keywords related to your intrest eg: for forest, lion,deer..etc"
+                }
+                btnName={"Add keyword"}
               />
             </div>
           );
         })}
 
-        <button
-          className="border border-white"
-          onClick={() => {
-            addInterest();
-          }}
-        >
-          add
-        </button>
+        <div className="flex w-full">
+          <button
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 bg-transparent transition-colors flex items-center p-[8px] rounded-md outline active:bg-slate-700"
+            onClick={() => {
+              addInterest();
+            }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Education
+          </button>
+        </div>
       </div>
     </>
   );

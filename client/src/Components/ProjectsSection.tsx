@@ -1,4 +1,6 @@
+import { Plus } from "lucide-react";
 import type { TProjectsSchema } from "../Schema";
+import DeleteBtn from "./Buttons/Delete";
 import CustomField from "./CustomField";
 import Highlights from "./Highlights";
 
@@ -124,29 +126,29 @@ export default function ProjectsSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[15px] ">
+      <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px] ">
         <h1 className="font-bold text-2xl text-white">Projects section</h1>
 
         {intialProjectsData?.map((projectItem, index) => {
           return (
             <div
-              className="flex flex-col gap-[10px] border border-white p-[10px]"
+              className="flex flex-col gap-[15px] w-full border border-slate-600/40 bg-slate-700/20 rounded-lg p-[16px]"
               key={index}
             >
-              <div className="flex ">
-                <button
-                  onClick={() => {
-                    deleteProject(index);
-                  }}
-                  className="justify-end"
-                >
-                  delete
-                </button>
-              </div>
+           <div className="flex justify-between ">
+                          <span className="font-medium text-slate-200">
+                            {`Project ${index + 1}`}
+                          </span>
+                          <DeleteBtn
+                            onclick={() => {
+                              deleteProject(index);
+                            }}
+                          ></DeleteBtn>
+                        </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
                 {(
-                  ["name"] as (
+                  ["name","url"] as (
                     | "name"
                     | "startDate"
                     | "endDate"
@@ -170,7 +172,7 @@ export default function ProjectsSection({
                 })}
               </div>
 
-              <div>
+             {/*  <div>
                 {(
                   ["url"] as (
                     | "name"
@@ -194,7 +196,11 @@ export default function ProjectsSection({
                     />
                   );
                 })}
-              </div>
+              </div> 
+              
+               we will add github link here, have to 
+              */
+              }
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
                 {(
@@ -247,7 +253,7 @@ export default function ProjectsSection({
                 })}
               </div>
 
-              <h1>highlights</h1>
+              <h1 className="text-white font-medium">Highlights</h1>
               <Highlights
                 intialData={projectItem.highlights}
                 onAdd={() => {
@@ -259,19 +265,24 @@ export default function ProjectsSection({
                 OnDelete={(highIndex) => {
                   deleteHighlights(index, highIndex);
                 }}
+                placeholder={"eg: won award at aihacks 2018 "}
+                btnName={"add Highlight"}
               />
             </div>
           );
         })}
 
-        <button
-          className="border border-white"
-          onClick={() => {
-            addProject();
-          }}
-        >
-          add
-        </button>
+       <div className="flex w-full">
+          <button
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 bg-transparent transition-colors flex items-center p-[8px] rounded-md outline active:bg-slate-700"
+            onClick={() => {
+              addProject();
+            }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Project
+          </button>
+        </div>
       </div>
     </>
   );

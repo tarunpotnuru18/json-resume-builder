@@ -1,9 +1,11 @@
 import express, { Express, Request, Response } from "express";
 import fs from "fs/promises";
 import path from "path";
-import { exec, execSync } from "child_process";
+import cors from "cors";
+import { exec } from "child_process";
 import { promisify } from "util";
 let app = express();
+app.use(cors({ origin: "http://localhost:5173" }));
 console.log(__dirname);
 app.use(express.json());
 async function generateResume(req: Request, res: Response) {
@@ -17,9 +19,11 @@ async function generateResume(req: Request, res: Response) {
     await asyncExec(`resumed render ${resumePath}`, {
       cwd: path.join(__dirname, "../src"),
     });
+    await asyncExec("npm run inject:script");
+
     let html = await fs.readFile(htmlPath, "utf-8");
 
-    res.json("done");
+    res.json(html);
   } catch (error: any) {
     console.log(error.message);
     res.send("not done bro");

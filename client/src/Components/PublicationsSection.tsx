@@ -1,14 +1,16 @@
+import { Plus } from "lucide-react";
 import type { TPublicationsSchema } from "../Schema";
+import DeleteBtn from "./Buttons/Delete";
 import CustomField from "./CustomField";
-
-
 
 export default function PublicationsSection({
   intialPublicationsData,
   setPublicationsData,
 }: {
   intialPublicationsData: TPublicationsSchema;
-  setPublicationsData: React.Dispatch<React.SetStateAction<TPublicationsSchema>>;
+  setPublicationsData: React.Dispatch<
+    React.SetStateAction<TPublicationsSchema>
+  >;
 }) {
   let PublicationsFields: Record<
     string,
@@ -17,10 +19,12 @@ export default function PublicationsSection({
     name: {
       as: "input",
       type: "text",
+      placeholder:" publication name"
     },
     publisher: {
       as: "input",
       type: "text",
+      placeholder:"publisher name"
     },
     releaseDate: {
       as: "input",
@@ -29,6 +33,7 @@ export default function PublicationsSection({
     url: {
       as: "input",
       type: "text",
+      placeholder:"url of the publication"
     },
     summary: {
       as: "textarea",
@@ -76,26 +81,25 @@ export default function PublicationsSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[15px] ">
+      <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px]">
         <h1 className="font-bold text-2xl text-white">Publications section</h1>
 
         {intialPublicationsData?.map((publicationsItem, index) => {
           return (
             <div
-              className="flex flex-col gap-[10px] border border-white p-[10px]"
+              className="flex flex-col gap-[15px] w-full border border-slate-600/40 bg-slate-700/20 rounded-lg p-[16px]"
               key={index}
             >
-              <div className="flex ">
-                <button
-                  onClick={() => {
+              <div className="flex justify-between ">
+                <span className="font-medium text-slate-200">
+                  {`Publication ${index + 1}`}
+                </span>
+                <DeleteBtn
+                  onclick={() => {
                     deletePublications(index);
                   }}
-                  className="justify-end"
-                >
-                  delete
-                </button>
+                ></DeleteBtn>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
                 {(
                   ["name", "publisher"] as (
@@ -203,14 +207,18 @@ export default function PublicationsSection({
           );
         })}
 
-        <button
-          className="border border-white"
-          onClick={() => {
-            addPublications();
-          }}
-        >
-          add
-        </button>
+         <div className="flex w-full">
+          <button
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 bg-transparent transition-colors flex items-center p-[8px] rounded-md outline active:bg-slate-700"
+            onClick={() => {
+              addPublications();
+            }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Publication
+          </button>
+        </div>
+        
       </div>
     </>
   );

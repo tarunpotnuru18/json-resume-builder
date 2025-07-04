@@ -1,4 +1,6 @@
+import { Plus } from "lucide-react";
 import type { TWorkSchema } from "../Schema";
+import DeleteBtn from "./Buttons/Delete";
 import CustomField from "./CustomField";
 import Highlights from "./Highlights";
 export default function WorkSection({
@@ -13,6 +15,7 @@ export default function WorkSection({
     { placeholder?: string; as?: "textarea" | string; type?: string }
   > = {
     name: {
+      placeholder:"enter your company name eg:google",
       as: "input",
       type: "text",
     },
@@ -24,6 +27,7 @@ export default function WorkSection({
     url: {
       as: "input",
       type: "text",
+      placeholder:"www.google.com"
     },
     startDate: {
       as: "input",
@@ -36,6 +40,7 @@ export default function WorkSection({
     summary: {
       as: "textarea",
       type: "text",
+      placeholder:"summary about your work"
     },
   };
   function handleWorkData(
@@ -128,24 +133,23 @@ export default function WorkSection({
 
   return (
     <>
-      <div className="flex flex-col gap-[15px] ">
+      <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px]">
         <h1 className="font-bold text-2xl text-white">Work section</h1>
-
         {intialWorkData?.map((workItem, index) => {
           return (
             <div
-              className="flex flex-col gap-[10px] border border-white p-[10px]"
+              className="flex flex-col gap-[15px] w-full border border-slate-600/40 bg-slate-700/20 rounded-lg p-[16px]"
               key={index}
             >
-              <div className="flex ">
-                <button
-                  onClick={() => {
+              <div className="flex justify-between ">
+                <span className="font-medium text-slate-200">
+                  {`Experience ${index + 1}`}
+                </span>
+                <DeleteBtn
+                  onclick={() => {
                     deleteWork(index);
                   }}
-                  className="justify-end"
-                >
-                  delete
-                </button>
+                ></DeleteBtn>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-[25px]">
@@ -188,7 +192,7 @@ export default function WorkSection({
                 ).map((field) => {
                   return (
                     <CustomField
-                      fieldName={field}
+                      fieldName={field.toLocaleUpperCase()}
                       value={workItem[field] || ""}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         handleWorkData(e, index, field);
@@ -255,7 +259,7 @@ export default function WorkSection({
                 })}
               </div>
 
-              <h1>acheivements</h1>
+              <h1 className="font-medium text-slate-300">Acheivements</h1>
               <Highlights
                 intialData={workItem.highlights}
                 onAdd={() => {
@@ -267,19 +271,24 @@ export default function WorkSection({
                 OnDelete={(highIndex) => {
                   deleteHighlights(index, highIndex);
                 }}
+                placeholder={"describe your Acheivement eg:improved ui"}
+                btnName={"Add Acheivement"}
               />
             </div>
           );
         })}
 
-        <button
-          className="border border-white"
-          onClick={() => {
-            addWork();
-          }}
-        >
-          add
-        </button>
+        <div className="w-full">
+          <button
+            onClick={() => {
+              addWork();
+            }}
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 bg-transparent transition-colors flex items-center p-[8px] rounded-md outline active:bg-slate-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Work Experience
+          </button>
+        </div>
       </div>
     </>
   );
