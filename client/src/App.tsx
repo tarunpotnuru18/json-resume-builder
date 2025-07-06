@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
+
 import { convert } from "@catalystic/json-to-yaml";
+import { ResumeZodSchema } from "./Schema";
+import { Toaster } from "sonner";
+import { toast } from "sonner";
+import Editor from "@monaco-editor/react";
+import { z } from "zod";
 let milindBro = {
   meta: {
     theme: "jsonresume-theme-stackoverflow",
@@ -389,6 +395,9 @@ import InterestsSection from "./Components/InterestsSection";
 import ReferencesSection from "./Components/ReferencesSection";
 import ProjectsSection from "./Components/ProjectsSection";
 import { Check, Link2, SquareArrowOutUpRight } from "lucide-react";
+import JsxModal from "./Components/Modals/JsonModal";
+import YamlModal from "./Components/Modals/YamlModal";
+import PlayGround from "./Components/PlayGround";
 
 let sampleData = {
   meta: {
@@ -435,10 +444,12 @@ let sampleData = {
   projects: [],
 };
 function App() {
-  const [formData, setFormData] = useState<TResumeSchema>(milindBro);
+  const [formData, setFormData] = useState<TResumeSchema>(sampleData);
 
   const [basicData, setBasic] = useState<TBasicSchema>(formData.basics);
+
   const [workData, setWork] = useState<TWorkSchema>(formData.work);
+
   const [volunteerData, setVolunteer] = useState<TVolunteerSchema>(
     formData.volunteer
   );
@@ -466,39 +477,73 @@ function App() {
     formData.projects
   );
 
+  const [jsxOpen, setJsxOpen] = useState<boolean>(false);
+  const [YamlOpen, setYamlOpen] = useState<boolean>(false);
+  const [playOpen, setPlayOpen] = useState<boolean>(false);
+
   const handleGenerateResume = async (data: any) => {
     try {
-      const response = await fetch("http://localhost:8080/resume", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ resumeObject: data }),
-      });
+      let ResumeValidation = ResumeZodSchema.safeParse(data);
+      if (ResumeValidation.success === true) {
+        const response = await fetch("http://localhost:8080/resume", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ resumeObject: data }),
+        });
 
-      const html = await response.json();
+        const html = await response.json();
 
-      // Open new tab and write HTML content into it
-      const newWindow = window.open("", "_blank");
-      if (newWindow) {
-        newWindow.document.open();
-        newWindow.document.write(html);
-        newWindow.document.close();
+        // Open new tab and write HTML content into it
+        const newWindow = window.open("", "_blank");
+        if (newWindow) {
+          newWindow.document.open();
+          newWindow.document.write(html);
+          newWindow.document.close();
+        } else {
+          alert("Popup blocked! Please allow popups for this site.");
+        }
       } else {
-        alert("Popup blocked! Please allow popups for this site.");
+        console.log(ResumeValidation);
+        throw new Error("error while generating resume");
       }
     } catch (error) {
       console.error("Error generating resume:", error);
+      toast.error("error while generating resume");
     }
   };
   const handleYamlGenerate = (data) => {
     const yaml = convert(data);
     console.log(yaml);
   };
+  const intializeWithData = (sampleData: any) => {
+    setFormData(sampleData);
+    setBasic(sampleData.basics);
+    setWork(sampleData.work);
+    setVolunteer(sampleData.volunteer || []);
+    setEducation(sampleData.education);
+    setAwards(sampleData.awards || []);
+    setCertificates(sampleData.certificates || []);
+    setPublications(sampleData.publications || []);
+    setSkills(sampleData.skills || []);
+    setLanguages(sampleData.languages || []);
+    setInterests(sampleData.interests || []);
+    setReferences(sampleData.references || []);
+    setProjects(sampleData.projects || []);
+  };
 
   useEffect(() => {
-    console.log("form data from use effect", formData);
-  }, [formData]);
+    if (jsxOpen || YamlOpen || playOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [jsxOpen, YamlOpen, playOpen]);
 
   useEffect(() => {
     console.log("changes done on basic Section", basicData);
@@ -585,129 +630,185 @@ function App() {
   }, [projectsData]);
 
   return (
-    <div className="w-full p-[32px] bg-slate-900 font-inter ">
-      <div className="max-w-4xl flex flex-col gap-[30px] mx-auto p-[12px] ">
-        <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px]">
-          <h1 className="font-bold text-2xl text-white">Theme</h1>
-          <p className="text-[15px]  text-white">
-            Choose a theme for your resume layout and styling
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-slate-400">
-            {[
-              {
-                name: "stackoverflow",
-                themeName: "jsonresume-theme-stackoverflow",
-              },
-              {
-                name: "even",
-                themeName: "jsonresume-theme-even",
-              },
-            ].map((themeItem) => {
-              return (
-                <div
-                  onClick={() => {
-                    setFormData((prev) => {
-                      return {
-                        ...prev,
-                        meta: { ...prev.meta, theme: themeItem.themeName },
-                      };
-                    });
-                  }}
-                  className={`flex flex-col p-[10px] gap-[10px] border-2 rounded-md cursor-pointer transition-all  ${
-                    formData.meta?.theme === themeItem.themeName
-                      ? "border-purple-500 bg-purple-900/20"
-                      : "border-slate-600 hover:border-slate-500"
-                  }`}
-                >
-                  <div className="flex gap-[20px] justify-between">
-                    <p className="font-medium text-slate-200">
-                      {themeItem.name}
-                    </p>
-                    {formData.meta?.theme === themeItem.themeName && (
-                      <Check className="h-4 w-4 text-purple-400" />
-                    )}
+    <>
+      <div className="w-full  pt-[0px] bg-slate-900 font-inter ">
+        <div className="sticky z-[10] w-full  top-[0px] left-0 right-0    bg-slate-900 border-b border-slate-700/60 ">
+          <header className="max-w-4xl mx-auto px-4 md:px-8 py-4 flex justify-between">
+            <div className="">
+              <h1 className="text-xl md:text-2xl font-bold text-slate-200">
+                Resume Builder
+              </h1>
+              <p className="text-sm text-slate-400">
+                A JSON based resume builder
+              </p>
+            </div>
+            <div>
+              {" "}
+              <button
+                onClick={() => {
+                  setJsxOpen(true);
+                }}
+                className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
+              >
+                json
+              </button>
+              <button
+                onClick={() => {
+                  setYamlOpen(true);
+                }}
+                className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
+              >
+                Yaml
+              </button>
+            </div>
+          </header>
+        </div>
+        <div className="max-w-4xl flex flex-col gap-[30px] mx-auto p-[12px] ">
+          <div className="flex flex-col gap-[15px] rounded-lg border border-slate-700/40 bg-slate-800/90 py-[24px] px-[12px] md:px-[24px]">
+            <h1 className="font-bold text-2xl text-white">Theme</h1>
+            <p className="text-[15px]  text-white">
+              Choose a theme for your resume layout and styling
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-slate-400">
+              {[
+                {
+                  name: "stackoverflow",
+                  themeName: "jsonresume-theme-stackoverflow",
+                },
+                {
+                  name: "even",
+                  themeName: "jsonresume-theme-even",
+                },
+              ].map((themeItem) => {
+                return (
+                  <div
+                    onClick={() => {
+                      setFormData((prev) => {
+                        return {
+                          ...prev,
+                          meta: { ...prev.meta, theme: themeItem.themeName },
+                        };
+                      });
+                    }}
+                    className={`flex flex-col p-[10px] gap-[10px] border-2 rounded-md cursor-pointer transition-all  ${
+                      formData.meta?.theme === themeItem.themeName
+                        ? "border-purple-500 bg-purple-900/20"
+                        : "border-slate-600 hover:border-slate-500"
+                    }`}
+                  >
+                    <div className="flex gap-[20px] justify-between">
+                      <p className="font-medium text-slate-200">
+                        {themeItem.name}
+                      </p>
+                      {formData.meta?.theme === themeItem.themeName && (
+                        <Check className="h-4 w-4 text-purple-400" />
+                      )}
+                    </div>
+                    <div className=" flex justify-between items-center">
+                      <p>Preview</p>
+                      <button className="hover:text-white ">
+                        <a
+                          href={`https://registry.jsonresume.org/thomasdavis?theme=${themeItem.name}`}
+                          target="_blank"
+                        >
+                          <SquareArrowOutUpRight className="h-4 w-4" />
+                        </a>
+                      </button>
+                    </div>
                   </div>
-                  <div className=" flex justify-between items-center">
-                    <p>Preview</p>
-                    <button className="hover:text-white ">
-                      <a
-                        href={`https://registry.jsonresume.org/thomasdavis?theme=${themeItem.name}`}
-                        target="_blank"
-                      >
-                        <SquareArrowOutUpRight className="h-4 w-4" />
-                      </a>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          </div>
+
+          <BasicSection initalBasicData={basicData} setBasicData={setBasic} />
+          <WorkSection intialWorkData={workData} setWorkData={setWork} />
+          <VolunteerSection
+            intialVolunteerData={volunteerData}
+            setVolunteerData={setVolunteer}
+          />
+          <EducationSection
+            intialEducationData={educationData}
+            setEducationData={setEducation}
+          />
+          <AwardsSection
+            intialAwardsData={awardsData}
+            setAwardsData={setAwards}
+          />
+          <CertificatesSection
+            intialCertificatesData={certificatesData}
+            setCertificatesData={setCertificates}
+          />
+          <PublicationsSection
+            intialPublicationsData={publicationsData}
+            setPublicationsData={setPublications}
+          />
+          <SkillsSection
+            intialSkillsData={skillsData}
+            setSkillsData={setSkills}
+          />
+          <LanguagesSection
+            intialLanguagesData={languagesData}
+            setLanguagesData={setLanguages}
+          />
+          <InterestsSection
+            intialInterestsData={interestsData}
+            setInterestsData={setInterests}
+          />
+          <ReferencesSection
+            intialReferencesData={referencesData}
+            setReferencesData={setReferences}
+          />
+          <ProjectsSection
+            intialProjectsData={projectsData}
+            setProjectsData={setProjects}
+          />
+
+          <div className="p-[10px] flex justify-center">
+            <button
+              onClick={() => {
+                handleGenerateResume(formData);
+              }}
+              className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
+            >
+              send resume
+            </button>
           </div>
         </div>
+        <div>
+          <JsxModal open={jsxOpen} setOpen={setJsxOpen} jsonData={formData} />
+          <YamlModal
+            open={YamlOpen}
+            setOpen={setYamlOpen}
+            jsonData={formData}
+          />
 
-        <BasicSection initalBasicData={basicData} setBasicData={setBasic} />
-        <WorkSection intialWorkData={workData} setWorkData={setWork} />
-        <VolunteerSection
-          intialVolunteerData={volunteerData}
-          setVolunteerData={setVolunteer}
-        />
-        <EducationSection
-          intialEducationData={educationData}
-          setEducationData={setEducation}
-        />
-        <AwardsSection
-          intialAwardsData={awardsData}
-          setAwardsData={setAwards}
-        />
-        <CertificatesSection
-          intialCertificatesData={certificatesData}
-          setCertificatesData={setCertificates}
-        />
-        <PublicationsSection
-          intialPublicationsData={publicationsData}
-          setPublicationsData={setPublications}
-        />
-        <SkillsSection
-          intialSkillsData={skillsData}
-          setSkillsData={setSkills}
-        />
-        <LanguagesSection
-          intialLanguagesData={languagesData}
-          setLanguagesData={setLanguages}
-        />
-        <InterestsSection
-          intialInterestsData={interestsData}
-          setInterestsData={setInterests}
-        />
-        <ReferencesSection
-          intialReferencesData={referencesData}
-          setReferencesData={setReferences}
-        />
-        <ProjectsSection
-          intialProjectsData={projectsData}
-          setProjectsData={setProjects}
-        />
-
-        <div className="p-[10px] flex justify-center">
           <button
             onClick={() => {
-              handleGenerateResume(formData);
+              intializeWithData(sampleData);
             }}
             className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
           >
-            send resume
+            reset form
           </button>
         </div>
+        <Toaster richColors />
       </div>
-
-      <div className="mb-8 p-6 border border-gray-200 rounded-lg">
-        <h2 className="text-xl font-semibold mb-4 text-white">
-          Resume Data (JSON Preview)
-        </h2>
-        <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96 text-sm">
-          {JSON.stringify(formData, null, 2)}
-        </pre>
+      <div className="">
+        <button
+          onClick={() => {
+            setPlayOpen(true);
+          }}
+        >
+          editor
+        </button>
+        <PlayGround
+          setData={intializeWithData}
+          setOpen={setPlayOpen}
+          open={playOpen}
+        />
       </div>
-    </div>
+    </>
   );
 }
 
