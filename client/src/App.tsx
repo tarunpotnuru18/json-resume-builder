@@ -444,7 +444,7 @@ let sampleData = {
   projects: [],
 };
 function App() {
-  const [formData, setFormData] = useState<TResumeSchema>(sampleData);
+  const [formData, setFormData] = useState<TResumeSchema>(milindBro);
 
   const [basicData, setBasic] = useState<TBasicSchema>(formData.basics);
 
@@ -631,7 +631,7 @@ function App() {
 
   return (
     <>
-      <div className="w-full  pt-[0px] bg-slate-900 font-inter ">
+      <div className="w-full  pt-[0px] bg-slate-900 font-inter pb-[10px] ">
         <div className="sticky z-[10] w-full  top-[0px] left-0 right-0    bg-slate-900 border-b border-slate-700/60 ">
           <header className="max-w-4xl mx-auto px-4 md:px-8 py-4 flex justify-between">
             <div className="">
@@ -642,23 +642,22 @@ function App() {
                 A JSON based resume builder
               </p>
             </div>
-            <div>
-              {" "}
+            <div className="flex items-center gap-[10px]">
               <button
                 onClick={() => {
-                  setJsxOpen(true);
+                  setPlayOpen(true);
                 }}
-                className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
+                className="bg-blue-500 p-[5px] rounded text-white hover:bg-blue-400 cursor-pointer text-sm"
               >
-                json
+                Set JSON
               </button>
               <button
                 onClick={() => {
-                  setYamlOpen(true);
+                  intializeWithData(sampleData);
                 }}
-                className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
+                className="bg-blue-500 p-[5px] rounded text-white hover:bg-blue-400 cursor-pointer text-sm"
               >
-                Yaml
+                Reset form
               </button>
             </div>
           </header>
@@ -679,6 +678,7 @@ function App() {
                   name: "even",
                   themeName: "jsonresume-theme-even",
                 },
+               
               ].map((themeItem) => {
                 return (
                   <div
@@ -771,42 +771,42 @@ function App() {
               }}
               className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
             >
-              send resume
+              Generate Resume
             </button>
           </div>
         </div>
         <div>
+          <div className="w-full flex justify-center gap-[30px] ">
+            <button
+              onClick={() => {
+                setJsxOpen(true);
+              }}
+              className="bg-blue-500 p-[5px] rounded text-white hover:bg-blue-400 cursor-pointer text-sm"
+            >
+              Get JSON
+            </button>
+            <button
+              onClick={() => {
+                setYamlOpen(true);
+              }}
+              className="bg-blue-500 p-[5px] rounded text-white hover:bg-blue-400 cursor-pointer text-sm"
+            >
+              Get YAML
+            </button>
+          </div>
           <JsxModal open={jsxOpen} setOpen={setJsxOpen} jsonData={formData} />
           <YamlModal
             open={YamlOpen}
             setOpen={setYamlOpen}
             jsonData={formData}
           />
-
-          <button
-            onClick={() => {
-              intializeWithData(sampleData);
-            }}
-            className="bg-blue-500 p-[10px] rounded text-white hover:bg-blue-400 cursor-pointer"
-          >
-            reset form
-          </button>
+          <PlayGround
+            setData={intializeWithData}
+            setOpen={setPlayOpen}
+            open={playOpen}
+          />
         </div>
         <Toaster richColors />
-      </div>
-      <div className="">
-        <button
-          onClick={() => {
-            setPlayOpen(true);
-          }}
-        >
-          editor
-        </button>
-        <PlayGround
-          setData={intializeWithData}
-          setOpen={setPlayOpen}
-          open={playOpen}
-        />
       </div>
     </>
   );

@@ -116,7 +116,7 @@ const MetaSchema = z.object({
       }),
     })
     .optional(),
-  canonical: z.string().url().optional(),
+  canonical: z.string().optional(),
   version: z.string().optional(), // e.g., v1.0.0 (SemVer recommended)
   lastModified: z.string().datetime().optional(), // JSON schema doesn't specify time, keep simple string for now
 });
@@ -125,23 +125,23 @@ const LocationSchema = z.object({
   address: z.string().optional(),
   postalCode: z.string().optional(),
   city: z.string().optional(),
-  countryCode: z.string().length(2).optional(), // ISO 3166-1 alpha-2
+  countryCode: z.string().optional(), // ISO 3166-1 alpha-2
   region: z.string().optional(),
 });
 
 const ProfileSchema = z.object({
   network: z.string().optional(), // e.g., "LinkedIn", "GitHub"
   username: z.string().optional(),
-  url: z.string().url().optional(),
+  url: z.string().optional(),
 });
 
 const BasicsSchema = z.object({
   name: z.string().optional(),
   label: z.string().optional(), // e.g., "Software Engineer"
-  image: z.string().url().optional(), // URL to profile picture
-  email: z.string().email().optional(),
+  image: z.string().optional(), // URL to profile picture
+  email: z.string().optional(),
   phone: z.string().optional(), // E.164 format recommended
-  url: z.string().url().optional(), // Personal website/portfolio
+  url: z.string().optional(), // Personal website/portfolio
   summary: z.string().optional(), // A brief overview
   location: LocationSchema.optional(),
   profiles: z.array(ProfileSchema).optional(),
@@ -152,7 +152,7 @@ const WorkSchema = z.object({
   location: z.string().optional(), // e.g., Menlo Park, CA (Different from Basics location object)
   description: z.string().optional(), // Added field
   position: z.string().optional(),
-  url: z.string().url().optional(),
+  url: z.string().optional(),
   startDate: iso8601DateSchema,
   endDate: iso8601DateSchema,
   summary: z.string().optional(), // Describe responsibilities
@@ -162,7 +162,7 @@ const WorkSchema = z.object({
 const VolunteerSchema = z.object({
   organization: z.string().optional(),
   position: z.string().optional(),
-  url: z.string().url().optional(),
+  url: z.string().optional(),
   startDate: iso8601DateSchema,
   endDate: iso8601DateSchema,
   summary: z.string().optional(),
@@ -171,7 +171,7 @@ const VolunteerSchema = z.object({
 
 const EducationSchema = z.object({
   institution: z.string().optional(),
-  url: z.string().url().optional(),
+  url: z.string().optional(),
   area: z.string().optional(), // e.g., "Computer Science"
   studyType: z.string().optional(), // e.g., "Bachelor", "Master"
   startDate: iso8601DateSchema,
@@ -191,14 +191,14 @@ const CertificateSchema = z.object({
   name: z.string().optional(),
   date: iso8601DateSchema,
   issuer: z.string().optional(),
-  url: z.string().url().optional(),
+  url: z.string().optional(),
 });
 
 const PublicationsSchema = z.object({
   name: z.string().optional(),
   publisher: z.string().optional(),
   releaseDate: iso8601DateSchema,
-  url: z.string().url().optional(),
+  url: z.string().optional(),
   summary: z.string().optional(),
 });
 
@@ -224,7 +224,7 @@ const ProjectSchema = z.object({
   keywords: z.array(z.string()).optional(),
   startDate: iso8601DateSchema,
   endDate: iso8601DateSchema,
-  url: z.string().url().optional(),
+  url: z.string().optional(),
   roles: z.array(z.string()).optional(),
   entity: z.string().optional(), // e.g., "Independent", "Company X"
   type: z.string().optional(), // e.g., "application", "library"
@@ -234,9 +234,9 @@ const TalksSchema = z.object({
   event: z.string().optional(),
   date: iso8601DateSchema,
   title: z.string().optional(),
-  website: z.string().url().optional(),
-  slides: z.string().url().optional(),
-  recording: z.string().url().optional(),
+  website: z.string().optional(),
+  slides: z.string().optional(),
+  recording: z.string().optional(),
   summary: z.string().optional(),
 });
 
@@ -245,7 +245,7 @@ const ReferenceSchema = z.object({
   reference: z.string().optional(),
 });
 export const ResumeZodSchema = z.object({
-  $schema: z.string().url().optional(),
+  $schema: z.string().optional(),
   meta: MetaSchema.optional(),
   basics: BasicsSchema.optional(),
   work: z.array(WorkSchema).optional(),

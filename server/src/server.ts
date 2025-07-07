@@ -6,12 +6,12 @@ import { exec } from "child_process";
 import { promisify } from "util";
 let app = express();
 app.use(cors({ origin: "http://localhost:5173" }));
-console.log(__dirname);
+
 app.use(express.json());
 async function generateResume(req: Request, res: Response) {
   try {
     let { body } = req;
-    console.log(body.resumeObject)
+    
     let resumeObject = JSON.stringify({ ...body.resumeObject });
     let resumePath = path.join(__dirname, "../src", "resume.json");
     let htmlPath = path.join(__dirname, "../src/resume.html");
