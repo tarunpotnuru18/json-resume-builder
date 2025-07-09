@@ -513,10 +513,7 @@ function App() {
       toast.error("error while generating resume");
     }
   };
-  const handleYamlGenerate = (data) => {
-    const yaml = convert(data);
-    console.log(yaml);
-  };
+ 
   const intializeWithData = (sampleData: any) => {
     setFormData(sampleData);
     setBasic(sampleData.basics);
