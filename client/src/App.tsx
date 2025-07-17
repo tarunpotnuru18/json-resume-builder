@@ -675,6 +675,10 @@ function App() {
                   name: "even",
                   themeName: "jsonresume-theme-even",
                 },
+                {
+                  name:"latex",
+                  themeName:"jsonresume-theme-latexone"
+                }
                
               ].map((themeItem) => {
                 return (
