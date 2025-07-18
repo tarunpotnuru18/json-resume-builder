@@ -11,7 +11,6 @@ app.use(express.json());
 async function generateResume(req: Request, res: Response) {
   try {
     let { body } = req;
-    
     let resumeObject = JSON.stringify({ ...body.resumeObject });
     let resumePath = path.join(__dirname, "../src", "resume.json");
     let htmlPath = path.join(__dirname, "../src/resume.html");

@@ -19,7 +19,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonresume-theme-even": "^0.23.0",
-    "jsonresume-theme-latexone": "^0.0.2",
+    "jsonresume-theme-latexone": "^0.0.3",
     "jsonresume-theme-stackoverflow": "^2.1.0",
     "resumed": "^6.0.0",
     "typescript": "^5.8.3"
